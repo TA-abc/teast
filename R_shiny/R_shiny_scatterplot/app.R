@@ -30,30 +30,60 @@ ui <- fluidPage(
  fluidRow(
    column(
      2
-    ,uiOutput(outputId="uiColumn_x")
+    ,uiOutput(outputId="uiColumn_x_1")
    )
   ,
   column(
     2
-    ,uiOutput(outputId="uiColumn_y")
+    ,uiOutput(outputId="uiColumn_y_1")
   )
   ,
   column(
     2
-    ,uiOutput(outputId="uiColumn_color")
+    ,uiOutput(outputId="uiColumn_color_1")
   )
  )
-
+ 
+ ,
+ fluidRow(
+   column(
+     2
+     ,uiOutput(outputId="uiColumn_x_2")
+   )
+   ,
+   column(
+     2
+     ,uiOutput(outputId="uiColumn_y_2")
+   )
+   ,
+   column(
+     2
+     ,uiOutput(outputId="uiColumn_color_2")
+   )
+ )
+ 
  ,fluidRow(
    column(
      6
-    ,plotOutput("scat_ggplot")
+    ,plotOutput("scat_ggplot_1")
    )
   ,column(
     6
-   ,plotlyOutput("scat_plotly")
+   ,plotlyOutput("scat_plotly_1")
   )
  )
+ 
+ ,fluidRow(
+   column(
+     6
+     ,plotOutput("scat_ggplot_2")
+   )
+   ,column(
+     6
+     ,plotlyOutput("scat_plotly_2")
+   )
+ )
+ 
 )
 
 
@@ -67,38 +97,66 @@ server = function(input, output, session){
     return(d)
   })
 
-  output$uiColumn_x <- renderUI({
+  output$uiColumn_x_1 <- renderUI({
     d <- readData()
     selectInput(
-      inputId="serverColumn_x"
+      inputId="serverColumn_x_1"
      ,label="Column x"
      ,choices=colnames(d)
     )
   })
-  output$uiColumn_y <- renderUI({
+  output$uiColumn_y_1 <- renderUI({
     d <- readData()
     selectInput(
-      inputId="serverColumn_y"
+      inputId="serverColumn_y_1"
       ,label="Column y"
       ,choices=colnames(d)
     )
   })
-  output$uiColumn_color <- renderUI({
+  output$uiColumn_color_1 <- renderUI({
     d <- readData()
     selectInput(
-      inputId="serverColumn_color"
+      inputId="serverColumn_color_1"
       ,label="Column color"
       ,choices=colnames(d)
     )
   })
   
-  output$scat_ggplot <- renderPlot({
+  output$uiColumn_x_2 <- renderUI({
+    d <- readData()
+    selectInput(
+      inputId="serverColumn_x_2"
+      ,label="Column x"
+      ,choices=colnames(d)
+    )
+  })
+  output$uiColumn_y_2 <- renderUI({
+    d <- readData()
+    selectInput(
+      inputId="serverColumn_y_2"
+      ,label="Column y"
+      ,choices=colnames(d)
+    )
+  })
+  output$uiColumn_color_2 <- renderUI({
+    d <- readData()
+    selectInput(
+      inputId="serverColumn_color_2"
+      ,label="Column color"
+      ,choices=colnames(d)
+    )
+  })
+  
+  
+  
+  
+  output$scat_ggplot_1 <- renderPlot({
 
     d <- readData()
 
-    column_x <- input$serverColumn_x
-    column_y <- input$serverColumn_y
-    column_color <- input$serverColumn_color
+    column_x <- input$serverColumn_x_1
+    column_y <- input$serverColumn_y_1
+    column_color <- input$serverColumn_color_1
     if(0){
       column_x <- "Sepal.Width"
       column_y <- "Petal.Width"
@@ -110,23 +168,61 @@ server = function(input, output, session){
     return(g)
   })
   
-  output$scat_plotly <- renderPlotly({
+  output$scat_plotly_1 <- renderPlotly({
     
     d <- readData()
     
-    column_x <- input$serverColumn_x
-    column_y <- input$serverColumn_y
-    column_color <- input$serverColumn_color
+    column_x <- input$serverColumn_x_1
+    column_y <- input$serverColumn_y_1
+    column_color <- input$serverColumn_color_1
 
     fig <- plot_ly(data = d, x = d[[column_x]], y = d[[column_y]], color = d[[column_color]])
     
     fig <- fig %>% layout(
       title = 'Styled Scatter'
-     ,yaxis = list(title = column_x)
+     ,xaxis = list(title = column_x)
      ,xaxis = list(title = column_y)
      )
   })
 
+  
+  
+  
+  output$scat_ggplot_2 <- renderPlot({
+    
+    d <- readData()
+    
+    column_x <- input$serverColumn_x_2
+    column_y <- input$serverColumn_y_2
+    column_color <- input$serverColumn_color_2
+    if(0){
+      column_x <- "Sepal.Width"
+      column_y <- "Petal.Width"
+      column_color <- "Species"
+    }
+    
+    g <- ggplot(d, aes(x=.data[[column_x]], y=.data[[column_y]], color=.data[[column_color]])) + geom_point()
+    
+    return(g)
+  })
+  
+  output$scat_plotly_2 <- renderPlotly({
+    
+    d <- readData()
+    
+    column_x <- input$serverColumn_x_2
+    column_y <- input$serverColumn_y_2
+    column_color <- input$serverColumn_color_2
+    
+    fig <- plot_ly(data = d, x = d[[column_x]], y = d[[column_y]], color = d[[column_color]])
+    
+    fig <- fig %>% layout(
+      title = 'Styled Scatter'
+      ,xaxis = list(title = column_x)
+      ,xaxis = list(title = column_y)
+    )
+  })
+  
 }
 
 ## shinyApp(ui,server, options = list(launch.browser = TRUE, display.mode ='normal'))
